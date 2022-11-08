@@ -1,0 +1,13 @@
+R5R(){
+cat<<R5R >> ${Inp_Name}
+[STAGE:R5R]
+    STAGECLASS   filtering.LigFilterStage
+    INPUTS   ${Ligand_name},
+    OUTPUTS   R5R_OUT,
+    CONDITIONS   "r_qp_mol_MW <= 650", "r_qp_QPlogPo/w <= 7", "r_qp_donorHB <= 6", "r_qp_accptHB <= 20"
+[USEROUTS:${task}]
+    USEROUTS   R5R_OUT,
+    STRUCTOUT   R5R_OUT
+R5R
+    Ligand_name="R5R_OUT"
+}

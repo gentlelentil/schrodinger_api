@@ -1,0 +1,25 @@
+QIKPROP(){
+cat<<QIKPROP >> ${Inp_Name}
+[STAGE:PRE_QIKPROP]
+    STAGECLASS   gencodes.RecombineStage
+    INPUTS   ${Ligand_name},
+    OUTPUTS   PRE_QIKPROP_RECOMBINE_OUT,
+    NUMOUT   njobs
+    OUTFORMAT   maegz
+    MIN_SUBJOB_STS   4000
+    MAX_SUBJOB_STS   40000
+    GENCODES   YES
+    OUTCOMPOUNDFIELD   s_vsw_compound_code
+    OUTVARIANTFIELD   s_vsw_variant
+    UNIQUEFIELD   s_m_title
+[STAGE:QIKPROP]
+    STAGECLASS   qikprop.QikPropStage
+    INPUTS   PRE_QIKPROP_RECOMBINE_OUT,
+    OUTPUTS   QIKPROP_OUT,
+    RECOMBINE   YES
+[USEROUTS:${task}]
+    USEROUTS   QIKPROP_OUT,
+    STRUCTOUT   QIKPROP_OUT
+QIKPROP
+    Ligand_name="QIKPROP_OUT"
+}

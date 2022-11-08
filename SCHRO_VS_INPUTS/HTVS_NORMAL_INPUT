@@ -1,0 +1,51 @@
+HTVS_Normal(){
+    KEEP_NUM=`parse_num_or_percentage ${HTVS_out_num}`
+cat<<HTVS >> ${Inp_Name}
+[STAGE:PRE_DOCK_HTVS]
+    STAGECLASS   gencodes.RecombineStage
+    INPUTS   ${Ligand_name},
+    OUTPUTS   HTVS_RECOMBINE_OUT,
+    NUMOUT   njobs
+    OUTFORMAT   maegz
+    MIN_SUBJOB_STS   4000
+    MAX_SUBJOB_STS   40000
+    GENCODES   YES
+    OUTCOMPOUNDFIELD   s_vsw_compound_code
+    OUTVARIANTFIELD   s_vsw_variant
+    UNIQUEFIELD   NONE
+[STAGE:DOCK_HTVS]
+    STAGECLASS   glide.DockingStage
+    INPUTS   HTVS_RECOMBINE_OUT, GRID
+    OUTPUTS   HTVS_OUT,
+    RECOMBINE   NO
+    PRECISION   HTVS
+    UNIQUEFIELD   s_vsw_compound_code
+    ${KEEP_NUM}
+    FORCEFIELD  ${corse_ff}
+    DOCKING_METHOD   confgen
+    POSES_PER_LIG   1
+    BEST_BY_TITLE   NO
+    LIG_VSCALE   0.8
+    LIG_CCUT   0.15
+    MAXATOMS   500
+    MAXROTBONDS   50
+    RINGCONFCUT 2.5
+    AMIDE_MODE   penal
+    POSE_OUTTYPE   LIB
+    POSTDOCK   YES
+    POSTDOCKSTRAIN   NO
+    COMPRESS_POSES   YES
+    EPIK_PENALTIES   YES
+    FORCEPLANAR   NO
+[STAGE:PULL_HTVS]
+    STAGECLASS   pull.PullStage
+    INPUTS   HTVS_OUT, HTVS_RECOMBINE_OUT
+    OUTPUTS   HTVS_OUT_ORIG,
+    UNIQUEFIELD   s_vsw_variant
+[USEROUTS:${task}]
+    USEROUTS   HTVS_OUT,
+    STRUCTOUT   HTVS_OUT
+HTVS
+    Ligand_name="HTVS_OUT_ORIG"
+    TO_RMSD="${Ligand_name}"
+}

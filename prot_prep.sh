@@ -1,0 +1,6 @@
+#!/bin/bash
+
+SCHRODINGER=${SCHRODINGER}
+
+echo $SCHRODINGER
+

@@ -1,0 +1,10 @@
+RDL(){
+cat<<RDL >> ${Inp_Name}
+[STAGE:RDL]
+    STAGECLASS   filtering.LigFilterStage
+    INPUTS   ${Ligand_name},
+    OUTPUTS   RDL_OUT,
+    CONDITIONS   "Molecular_weight <= 650", "Num_rotatable_bonds <= 10", "Num_rings <= 6"
+RDL
+    Ligand_name="RDL_OUT"
+}

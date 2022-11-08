@@ -1,0 +1,47 @@
+SP_ExtensionA(){
+    TO_RMSD="${Ligand_name}"
+    KEEP_NUM=`parse_num_or_percentage ${Docking_out_num}`
+cat<<SP >> ${Inp_Name}
+[STAGE:PRE_DOCK_${task}]
+    STAGECLASS   gencodes.RecombineStage
+    INPUTS   ${Ligand_name},
+    OUTPUTS   DOCK_${task}_INPUT,
+    NUMOUT   njobs
+    OUTFORMAT   maegz
+    MIN_SUBJOB_STS   300
+    MAX_SUBJOB_STS   5000
+    GENCODES   NO
+    UNIQUEFIELD   s_vsw_compound_code
+[STAGE:DOCK_${task}]
+    STAGECLASS   glide.DockingStage
+    INPUTS   DOCK_${task}_INPUT, GRID
+    OUTPUTS   ${task}_SP_OUT,
+    RECOMBINE   NO
+    PRECISION   SP
+    REWARD_INTRA_HBONDS YES
+    HBOND_ACCEP_HALO    YES
+    UNIQUEFIELD   s_vsw_compound_code
+    ${KEEP_NUM}
+    FORCEFIELD  ${Force_Field}
+    DOCKING_METHOD   confgen
+    POSES_PER_LIG   ${Dock_out_conf}
+    WRITE_XP_DESC   NO
+    NENHANCED_SAMPLING   1
+    BEST_BY_TITLE   NO
+    LIG_VSCALE   0.8
+    LIG_CCUT   0.15
+    MAXATOMS   500
+    MAXROTBONDS   50
+    AMIDE_MODE   penal
+    POSE_OUTTYPE   PV
+    POSTDOCK   YES
+    POSTDOCKSTRAIN   NO
+    COMPRESS_POSES   YES
+    EPIK_PENALTIES   YES
+    FORCEPLANAR   NO
+[USEROUTS:${task}]
+    USEROUTS   ${task}_SP_OUT,
+    STRUCTOUT   ${task}_SP_OUT
+SP
+    Ligand_name="${task}_SP_OUT"
+}
